@@ -72,6 +72,7 @@ public class RegActivity extends AppCompatActivity {
             @SuppressLint("ResourceAsColor")
             @Override
             public void onResponse(@NotNull Call<String> call, @NotNull Response<String> response) {
+                assert response.body() != null;
                 Log.d("debug", " response.body()" + response.body().toString());
                 //Toast.makeText()
                 if (response.isSuccessful()) {
@@ -122,10 +123,10 @@ public class RegActivity extends AppCompatActivity {
                                             //    Log.d("debug", ((EditText) allEds.get(i).findViewById(R.id.editText)).getText().toString());
                                         }
                                     }
-                                    Paper.book().write("mail", editmail.getText());
-                                 //   Paper.book().write("answer", answers);
-                                    Log.d("debug", "mailuser" + editmail.getText());
-                                    Log.d("debug", "answerString" + answers);
+                                    Paper.book().write("mail", editmail.getText().toString());
+                                    //   Paper.book().write("answer", answers);
+                                   // Log.d("debug", "mailuser" + editmail.getText());
+                                  //  Log.d("debug", "answerString" + answers);
 
                                     Intent mainIntent = new Intent(RegActivity.this, MainActivity.class);
                                     RegActivity.this.startActivity(mainIntent);
@@ -140,9 +141,8 @@ public class RegActivity extends AppCompatActivity {
                             e.printStackTrace();
                         }
 
-                    } else {
-                        //   Log.d("debug", "Returned empty response");//Toast.makeText(getContext(),"Nothing returned",Toast.LENGTH_LONG).show();
-                    }
+                    }  //   Log.d("debug", "Returned empty response");//Toast.makeText(getContext(),"Nothing returned",Toast.LENGTH_LONG).show();
+
                 }
             }
 
@@ -179,7 +179,7 @@ public class RegActivity extends AppCompatActivity {
 
         call.enqueue(new Callback<List<Post>>() {
             @Override
-            public void onResponse(Call<List<Post>> call, Response<List<Post>> response) {
+            public void onResponse(@NotNull Call<List<Post>> call, @NotNull Response<List<Post>> response) {
 
                 if (!response.isSuccessful()) {
 
@@ -192,7 +192,7 @@ public class RegActivity extends AppCompatActivity {
             }
 
             @Override
-            public void onFailure(Call<List<Post>> call, Throwable t) {
+            public void onFailure(@NotNull Call<List<Post>> call, @NotNull Throwable t) {
 
             }
         });

@@ -2,7 +2,6 @@ package com.hardcoding.homework;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
-import android.text.Html;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -53,7 +52,7 @@ public class RetroAdapter extends BaseAdapter {
         return 0;
     }
 
-    @SuppressLint("ResourceAsColor")
+    @SuppressLint({"ResourceAsColor", "SetTextI18n", "InflateParams"})
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
         final ViewHolder holder;
@@ -80,18 +79,18 @@ public class RetroAdapter extends BaseAdapter {
         holder.pid.setText(dataModelArrayList.get(position).getId());
         holder.title_task.setText(dataModelArrayList.get(position).getTitle());
         holder.inactive.setText(dataModelArrayList.get(position).getInactive());
-        if(holder.inactive.getText().equals("1")){
+        if (holder.inactive.getText().equals("1")) {
             holder.inactive.setText("Активно");
             holder.inactive.setTextColor(R.color.FFF);
             holder.inactive.setBackgroundResource(R.drawable.blacklable);
-        }else  if(holder.inactive.getText().equals("2")){
+        } else if (holder.inactive.getText().equals("2")) {
             holder.inactive.setText("Не активно");
             holder.inactive.setBackgroundResource(R.drawable.orangelable);
             holder.inactive.setTextColor(R.color.black);
 
         }
-        holder.desc_task.setText(Html.fromHtml(dataModelArrayList.get(position).getDecsript()));
-        holder.lavel.setText("уровень "+dataModelArrayList.get(position).getLavel());
+        holder.desc_task.setText(dataModelArrayList.get(position).getDecsript());
+        holder.lavel.setText("уровень " + dataModelArrayList.get(position).getLavel());
         holder.cat.setText(dataModelArrayList.get(position).getCat());
 
         //   holder.tvcity.setText(dataModelArrayList.get(position).getEnd_skidka());
@@ -99,9 +98,9 @@ public class RetroAdapter extends BaseAdapter {
         return convertView;
     }
 
-    private class ViewHolder {
+    private static class ViewHolder {
 
-        protected TextView pid, title_task, desc_task,lavel, inactive,cat;
+        protected TextView pid, title_task, desc_task, lavel, inactive, cat;
         protected Button asc, desc;
         protected ImageView iv;
 

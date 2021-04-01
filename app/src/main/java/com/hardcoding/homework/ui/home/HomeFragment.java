@@ -1,19 +1,27 @@
 package com.hardcoding.homework.ui.home;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.ListView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProviders;
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
+import com.hardcoding.homework.BuildConfig;
+import com.hardcoding.homework.DetailsActivity;
+import com.hardcoding.homework.Interface.LunchTask;
 import com.hardcoding.homework.Interface.MyInterface;
 import com.hardcoding.homework.ModelListView;
+import com.hardcoding.homework.Post;
 import com.hardcoding.homework.R;
 import com.hardcoding.homework.RetroAdapter;
 
@@ -24,12 +32,17 @@ import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 import io.paperdb.Paper;
+import okhttp3.OkHttpClient;
+import okhttp3.logging.HttpLoggingInterceptor;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 import retrofit2.Retrofit;
+import retrofit2.converter.gson.GsonConverterFactory;
 import retrofit2.converter.scalars.ScalarsConverterFactory;
 
 public class HomeFragment extends Fragment {
@@ -37,21 +50,48 @@ public class HomeFragment extends Fragment {
     ArrayList<HashMap<String, String>> productsList;
     private HomeViewModel homeViewModel;
     private RetroAdapter retroAdapter;
+    private SwipeRefreshLayout mSwipeRefreshLayout;
 
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
         homeViewModel =
                 ViewModelProviders.of(this).get(HomeViewModel.class);
-        View root = inflater.inflate(R.layout.fragment_home, container, false);
-        lv = root.findViewById(R.id.list);
+        View view = inflater.inflate(R.layout.fragment_home, container, false);
+        lv = view.findViewById(R.id.list);
         Paper.init(requireActivity());
+        mSwipeRefreshLayout = view.findViewById(R.id.swap);
+        mSwipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
 
+            @Override
+            public void onRefresh() {
+                getTaskJSONResponse();
+            }
+        });
 
         productsList = new ArrayList<HashMap<String, String>>();
-
+        String username =Paper.book().read("mail");
         getTaskJSONResponse();
+        getStatus(username);
 
-        return root;
+        lv.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+
+                TextView title = (TextView) view.findViewById(R.id.title_task);
+                TextView desc = (TextView) view.findViewById(R.id.desc_task);
+                TextView pid = (TextView) view.findViewById(R.id.pid);
+                TextView inactive = (TextView) view.findViewById(R.id.inactive);
+                Intent intent = new Intent(getContext(), DetailsActivity.class);
+                intent.putExtra("title", title.getText().toString());
+                intent.putExtra("descript", desc.getText().toString());
+                intent.putExtra("pid", pid.getText().toString());
+                intent.putExtra("inactive", inactive.getText().toString());
+
+                //Log.d("debug","title"+title.getText().toString());
+                startActivity(intent);
+            }
+        });
+        return view;
     }
 
     private void getTaskJSONResponse() {
@@ -129,7 +169,7 @@ public class HomeFragment extends Fragment {
 
                 retroAdapter = new RetroAdapter(getActivity(), modelListViewArrayList);
                 lv.setAdapter(retroAdapter);
-
+                mSwipeRefreshLayout.setRefreshing(false);
             } else {
                 Toast.makeText(getActivity(), obj.optString("message") + "", Toast.LENGTH_SHORT).show();
             }
@@ -139,4 +179,50 @@ public class HomeFragment extends Fragment {
         }
 
     }
+
+    public static void getStatus(String username) {
+
+        HttpLoggingInterceptor interceptor = new HttpLoggingInterceptor();
+        interceptor.setLevel(BuildConfig.DEBUG ? HttpLoggingInterceptor.Level.BODY : HttpLoggingInterceptor.Level.NONE);
+
+        OkHttpClient client = new OkHttpClient.Builder()
+                .addInterceptor(interceptor)
+                .build();
+
+        Retrofit retrofit = new Retrofit.Builder()
+                .baseUrl("http://homefit.beget.tech/api/")
+                .addConverterFactory(GsonConverterFactory.create())
+                .client(client)
+                .build();
+
+        LunchTask lunchTask = retrofit.create(LunchTask.class);
+
+        Map<String, String> parameters = new HashMap<>();
+        parameters.put("username", username);
+        //parameters.put("task_id", task_id);
+
+
+        Call<List<Post>> call = lunchTask.getStat(parameters);
+
+        call.enqueue(new Callback<List<Post>>() {
+            @Override
+            public void onResponse(@NotNull Call<List<Post>> call, @NotNull Response<List<Post>> response) {
+
+                if (!response.isSuccessful()) {
+
+
+                    return;
+                }
+
+                List<Post> posts = response.body();
+
+            }
+
+            @Override
+            public void onFailure(@NotNull Call<List<Post>> call, @NotNull Throwable t) {
+
+            }
+        });
+    }
+
 }

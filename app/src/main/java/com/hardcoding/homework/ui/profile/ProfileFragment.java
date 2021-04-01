@@ -12,6 +12,8 @@ import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProviders;
 
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 import com.hardcoding.homework.BuildConfig;
 import com.hardcoding.homework.Interface.MyInterfaceAnswer;
 import com.hardcoding.homework.R;
@@ -22,6 +24,7 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
@@ -44,6 +47,8 @@ public class ProfileFragment extends Fragment {
     TextView TxtName, TxtAnswer;
     String textname, textAnswer;
     public String mail;
+    String[] answerArr;
+
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
         homeViewModel =
@@ -55,6 +60,7 @@ public class ProfileFragment extends Fragment {
         mail = Paper.book().read("mail").toString();
         Log.d("debug", "mail" + mail);
         getUp(mail);
+
         return root;
 
     }
@@ -98,12 +104,15 @@ public class ProfileFragment extends Fragment {
                                 JSONObject c = items.getJSONObject(i);
                                 String id = c.getString("id");
                                 textname = c.getString("username");
-                                Log.d("debug", "texname" + textname);
                                 textAnswer = c.getString("answer");
+                                Log.d("debug", "texansrew" + textAnswer);
                                 TxtName.setText(textname);
-                                TxtAnswer.setText(textAnswer);
-                            }
 
+                            }
+                            textAnswer=textAnswer.replace(",","\n\n")
+                                    .replace("[","")
+                                    .replace("]","");
+                            TxtAnswer.setText(textAnswer);
                         } catch (JSONException e) {
                             e.printStackTrace();
                         }

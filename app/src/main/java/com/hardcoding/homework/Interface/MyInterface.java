@@ -10,4 +10,7 @@ public interface MyInterface {
     @GET("task.php")
     Call<String> getString();
 
+    @GET("status.php")
+    Call<String> getStat();
+
 }

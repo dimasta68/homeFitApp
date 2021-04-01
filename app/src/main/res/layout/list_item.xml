@@ -17,8 +17,9 @@
     <TextView
         android:id="@+id/pid"
         android:layout_width="fill_parent"
+        android:text="111"
         android:layout_height="wrap_content"
-        android:visibility="gone" />
+        android:visibility="visible" />
     <TextView
         android:id="@+id/cat"
         android:layout_width="fill_parent"

@@ -3,42 +3,46 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
+
     android:layout_height="match_parent"
     android:orientation="vertical"
-    tools:context=".ui.pass.GalleryFragment">
+    tools:context=".DetailsActivity">
+
 
     <ScrollView
+        android:paddingLeft="8dp"
+        android:paddingRight="8dp"
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:paddingEnd="8dp"
-            android:paddingStart="8dp"
             android:orientation="vertical" >
 
             <TextView
-                android:id="@+id/textMail"
+                android:id="@+id/title"
+                android:textSize="25sp"
+                android:layout_gravity="center"
+                android:gravity="center"
+                android:textColor="@color/color2"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="8dp"
-                android:layout_marginTop="8dp"
-                android:layout_marginEnd="8dp"
-                android:text="раздел  профиля"
-                android:textAlignment="center"
-                android:textColor="@color/color2"
-                android:textSize="20sp" />
+                android:text="TextView" />
 
             <TextView
-                android:id="@+id/anketa"
-                android:textSize="15sp"
-                android:textStyle="bold"
+                android:autoLink="web"
+                android:id="@+id/descriptions"
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:layout_marginTop="10dp"
-                android:text="anketa" />
+                android:layout_height="wrap_content"
+                android:text="TextView" />
+
+            <Button
+                android:id="@+id/btnStart"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="начать" />
         </LinearLayout>
     </ScrollView>
-
 </LinearLayout>
+
