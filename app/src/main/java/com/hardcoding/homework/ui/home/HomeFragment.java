@@ -21,7 +21,6 @@ import com.hardcoding.homework.DetailsActivity;
 import com.hardcoding.homework.Interface.LunchTask;
 import com.hardcoding.homework.Interface.MyInterface;
 import com.hardcoding.homework.ModelListView;
-import com.hardcoding.homework.Post;
 import com.hardcoding.homework.R;
 import com.hardcoding.homework.RetroAdapter;
 
@@ -32,7 +31,6 @@ import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 import io.paperdb.Paper;
@@ -42,14 +40,13 @@ import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 import retrofit2.Retrofit;
-import retrofit2.converter.gson.GsonConverterFactory;
 import retrofit2.converter.scalars.ScalarsConverterFactory;
 
 public class HomeFragment extends Fragment {
     ListView lv;
-    ArrayList<HashMap<String, String>> productsList;
+    public ArrayList<HashMap<String, String>> productsList;
     private HomeViewModel homeViewModel;
-    private RetroAdapter retroAdapter;
+    public RetroAdapter retroAdapter;
     private SwipeRefreshLayout mSwipeRefreshLayout;
 
     public View onCreateView(@NonNull LayoutInflater inflater,
@@ -67,11 +64,11 @@ public class HomeFragment extends Fragment {
                 getTaskJSONResponse();
             }
         });
-
+        ArrayList<ModelListView> modelListViewArrayList = new ArrayList<>();
         productsList = new ArrayList<HashMap<String, String>>();
-        String username =Paper.book().read("mail");
+        String username = Paper.book().read("mail");
         getTaskJSONResponse();
-        getStatus(username);
+        //getStatus(username);
 
         lv.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
@@ -86,6 +83,9 @@ public class HomeFragment extends Fragment {
                 intent.putExtra("descript", desc.getText().toString());
                 intent.putExtra("pid", pid.getText().toString());
                 intent.putExtra("inactive", inactive.getText().toString());
+                Log.d("debug","positon click"+position);
+               intent.putExtra("position",position);
+
 
                 //Log.d("debug","title"+title.getText().toString());
                 startActivity(intent);
@@ -180,49 +180,5 @@ public class HomeFragment extends Fragment {
 
     }
 
-    public static void getStatus(String username) {
-
-        HttpLoggingInterceptor interceptor = new HttpLoggingInterceptor();
-        interceptor.setLevel(BuildConfig.DEBUG ? HttpLoggingInterceptor.Level.BODY : HttpLoggingInterceptor.Level.NONE);
-
-        OkHttpClient client = new OkHttpClient.Builder()
-                .addInterceptor(interceptor)
-                .build();
-
-        Retrofit retrofit = new Retrofit.Builder()
-                .baseUrl("http://homefit.beget.tech/api/")
-                .addConverterFactory(GsonConverterFactory.create())
-                .client(client)
-                .build();
-
-        LunchTask lunchTask = retrofit.create(LunchTask.class);
-
-        Map<String, String> parameters = new HashMap<>();
-        parameters.put("username", username);
-        //parameters.put("task_id", task_id);
-
-
-        Call<List<Post>> call = lunchTask.getStat(parameters);
-
-        call.enqueue(new Callback<List<Post>>() {
-            @Override
-            public void onResponse(@NotNull Call<List<Post>> call, @NotNull Response<List<Post>> response) {
-
-                if (!response.isSuccessful()) {
-
-
-                    return;
-                }
-
-                List<Post> posts = response.body();
-
-            }
-
-            @Override
-            public void onFailure(@NotNull Call<List<Post>> call, @NotNull Throwable t) {
-
-            }
-        });
-    }
 
 }

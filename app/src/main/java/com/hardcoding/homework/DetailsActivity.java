@@ -15,6 +15,7 @@ import com.hardcoding.homework.Interface.LunchTask;
 
 import org.jetbrains.annotations.NotNull;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -32,7 +33,10 @@ public class DetailsActivity extends AppCompatActivity {
     Button btnStart;
     String pid;
     String inactive, username;
+    public List<Integer> positionfav= new ArrayList<>();
 
+
+    //  int pos;
     @Override
 
     protected void onCreate(Bundle savedInstanceState) {
@@ -41,11 +45,16 @@ public class DetailsActivity extends AppCompatActivity {
         TextView title = (TextView) findViewById(R.id.title);
         TextView descript = (TextView) findViewById(R.id.descriptions);
         btnStart = (Button) findViewById(R.id.btnStart);
+        Paper.init(getApplicationContext());
+        positionfav = Paper.book().read("positionfav");
+        Log.d("debug", "positionfav  " + positionfav);
         Intent intent = getIntent();
         String titles = intent.getStringExtra("title");
         String descrip = intent.getStringExtra("descript");
+        Log.d("debug", "details position=" + intent.getIntExtra("position", 0));
         inactive = intent.getStringExtra("inactive");
         pid = intent.getStringExtra("pid");
+
         Paper.init(getApplicationContext());
         username = Paper.book().read("mail");
         if (inactive.equals("Активно")) {
@@ -62,14 +71,21 @@ public class DetailsActivity extends AppCompatActivity {
             @SuppressLint("ResourceAsColor")
             @Override
             public void onClick(View v) {
-                if (btnStart.getText().equals("Активно")) {
+
+                int pos = intent.getIntExtra("position", 0);
+                if (btnStart.getText().equals("Активно")) { /// remove position fav
+                    positionfav.remove((Integer) pos);
+                    Paper.book().write("positionfav", positionfav);
                     getStop(username, pid);
                     btnStart.setText("Не активно");
-                } else if (btnStart.getText().equals("Не активно")) {
+                } else if (btnStart.getText().equals("Не активно")) { ////add position lunch
                     getLunch(username, pid);
+                    positionfav = Paper.book().read("positionfav");
+                    positionfav.add(pos);
+
+                    Paper.book().write("positionfav", positionfav);
                     btnStart.setText("Активно");
                 }
-
             }
         });
 

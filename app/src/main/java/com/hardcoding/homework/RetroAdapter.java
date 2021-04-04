@@ -9,21 +9,28 @@ import android.widget.BaseAdapter;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Locale;
+
+import io.paperdb.Paper;
 
 public class RetroAdapter extends BaseAdapter {
 
     private Context context;
     private ArrayList<ModelListView> dataModelArrayList;
-    String idBtn, rating;
     String lang = Locale.getDefault().getLanguage();
+    public List<Integer> positionfav = new ArrayList<>();
+    public List<Integer> OpenTask = new ArrayList<>();
 
     public RetroAdapter(Context context, ArrayList<ModelListView> dataModelArrayList) {
-
         this.context = context;
+        Paper.init(context);
+        positionfav = Paper.book().read("positionfav");
         this.dataModelArrayList = dataModelArrayList;
+        OpenTask.add(2);
     }
 
     @Override
@@ -68,6 +75,7 @@ public class RetroAdapter extends BaseAdapter {
             holder.inactive = (TextView) convertView.findViewById(R.id.inactive);
             holder.lavel = (TextView) convertView.findViewById(R.id.lavel);
             holder.cat = (TextView) convertView.findViewById(R.id.cat);
+            holder.img = (ImageView) convertView.findViewById(R.id.imgstat);
 
             convertView.setTag(holder);
         } else {
@@ -87,23 +95,40 @@ public class RetroAdapter extends BaseAdapter {
             holder.inactive.setText("Не активно");
             holder.inactive.setBackgroundResource(R.drawable.orangelable);
             holder.inactive.setTextColor(R.color.black);
-
         }
         holder.desc_task.setText(dataModelArrayList.get(position).getDecsript());
         holder.lavel.setText("уровень " + dataModelArrayList.get(position).getLavel());
         holder.cat.setText(dataModelArrayList.get(position).getCat());
 
-        //   holder.tvcity.setText(dataModelArrayList.get(position).getEnd_skidka());
+        for (int j = 0; j < positionfav.size(); j++) {
+            if (position == positionfav.get(j)) {
+                holder.img.setImageResource(R.drawable.ic_run);
+                holder.inactive.setText("Активно");
+                holder.inactive.setTextColor(R.color.FFF);
+                holder.inactive.setBackgroundResource(R.drawable.greanlable);
+            }
+        }
 
+        for (int j = 0; j < OpenTask.size(); j++) {
+            if (position >= OpenTask.get(j)) {
+                convertView.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        Toast.makeText(context, "Закрыто , пройдите предыдущие уровни", Toast.LENGTH_SHORT).show();
+                    }
+                });
+                holder.inactive.setText("закрыто");
+                holder.img.setImageResource(R.drawable.ic_lock);
+                holder.inactive.setTextColor(R.color.FFF);
+                holder.inactive.setBackgroundResource(R.drawable.blacklable);
+            }
+        }
         return convertView;
     }
 
     private static class ViewHolder {
-
         protected TextView pid, title_task, desc_task, lavel, inactive, cat;
         protected Button asc, desc;
-        protected ImageView iv;
-
+        protected ImageView img;
     }
-
 }

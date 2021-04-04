@@ -39,4 +39,6 @@ public interface LunchTask {
     @GET("statustask.php")
     Call<List<Post>> getStat(@QueryMap Map<String, String> parameters);
 
+    @GET("statustask.php")
+    Call<String> getStatus(@QueryMap Map<String, String> parameters);
 }
