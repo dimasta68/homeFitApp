@@ -10,10 +10,6 @@
     android:paddingLeft="8dp"
     android:paddingBottom="15dp">
 
-    <!--
-        Идентификатор продукта id
-        (pid) - будет HIDDEN - используется для передачи в другой activity -->
-
     <TextView
         android:id="@+id/pid"
         android:layout_width="fill_parent"

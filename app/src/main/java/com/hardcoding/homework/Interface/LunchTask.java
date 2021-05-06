@@ -27,7 +27,13 @@ public interface LunchTask {
             @Query("username") String username,
             @Query("id") String id
     );
-
+    @GET("report.php")
+    Call<List<Post>> getReports(
+            @Query("username") String username,
+            @Query("data") String data,
+            @Query("status") String status,
+            @Query("question") String question
+    );
     @GET("setstop.php")
     Call<List<Post>> getStop(@QueryMap Map<String, String> parameters);
 
@@ -41,4 +47,7 @@ public interface LunchTask {
 
     @GET("statustask.php")
     Call<String> getStatus(@QueryMap Map<String, String> parameters);
+
+    @GET("report.php")
+    Call<List<Post>> getReports(@QueryMap Map<String, String> parameters);
 }

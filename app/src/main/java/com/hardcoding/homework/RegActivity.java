@@ -1,6 +1,7 @@
 package com.hardcoding.homework;
 
 import android.annotation.SuppressLint;
+import android.app.TimePickerDialog;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
@@ -10,12 +11,17 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.TimePicker;
+import android.widget.Toast;
 import android.widget.ToggleButton;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.hardcoding.homework.Interface.EmailValidator;
+import com.hardcoding.homework.Interface.EmptyValidator;
 import com.hardcoding.homework.Interface.JsonPlaceHolderApi;
 import com.hardcoding.homework.Interface.MyInterfaceReg;
+import com.hardcoding.homework.Interface.ValidatorsComposer;
 
 import org.jetbrains.annotations.NotNull;
 import org.json.JSONArray;
@@ -23,6 +29,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -43,19 +50,38 @@ public class RegActivity extends AppCompatActivity {
     LinearLayout layout;
     private Object TextView;
     private int counter = 0;
-    EditText editmail;
+    EditText editmail,morning;
     String answers = null;
-
+    TimePickerDialog picker;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_reg);
         layout = (LinearLayout) findViewById(R.id.regViewScrol);
         editmail = (EditText) findViewById(R.id.editmail);
+        morning = (EditText) findViewById(R.id.morning);
+        morning.setFocusable(false);
         getRegJSONResponse();
         allEds = new ArrayList<View>();
         mapS = new ArrayList<>();
         Paper.init(getApplicationContext());
+        morning.setOnClickListener(new View.OnClickListener() {
+            @SuppressLint("SetTextI18n")
+            @Override
+            public void onClick(View v) {
+                final Calendar cldr = Calendar.getInstance();
+                int hour = cldr.get(Calendar.HOUR_OF_DAY);
+                int minutes = cldr.get(Calendar.MINUTE);
+                // time picker dialog
+                picker = new TimePickerDialog(RegActivity.this,
+                        (tp, sHour, sMinute) -> {
+                            Paper.book().write("mhour",sHour);
+                            Paper.book().write("mminute",sMinute);
+                            morning.setText(sHour + ":" + sMinute);
+                        }, hour, minutes, true);
+                picker.show();
+            }
+        });
     }
 
     private void getRegJSONResponse() {
@@ -101,8 +127,6 @@ public class RegActivity extends AppCompatActivity {
                                     allEds.add(view);
                                     layout.addView(view);
                                 }
-
-
                             }
                             Button btn = new Button(getApplicationContext());
                             btn.setBackgroundColor(R.color.color1);
@@ -110,28 +134,36 @@ public class RegActivity extends AppCompatActivity {
                             btn.setOnClickListener(new View.OnClickListener() {
                                 @Override
                                 public void onClick(View v) {
-                                    String[] TextView = new String[allEds.size()];
-                                    for (int i = 0; i < allEds.size(); i++) {
-                                        TextView[i] = ((TextView) allEds.get(i).findViewById(R.id.answer)).getText().toString();
-                                        mapS.add(((TextView) allEds.get(i).findViewById(R.id.answer)).getText().toString());
-                                        //   Log.d("debug", ((TextView) allEds.get(i).findViewById(R.id.answer)).getText().toString());
-                                        if (((ToggleButton) allEds.get(i).findViewById(R.id.togg)) != null) {
-                                            mapS.add(((ToggleButton) allEds.get(i).findViewById(R.id.togg)).getText().toString());
-                                            //  Log.d("debug", ((ToggleButton) allEds.get(i).findViewById(R.id.togg)).getText().toString());
-                                        } else if (((EditText) allEds.get(i).findViewById(R.id.editText)) != null) {
-                                            mapS.add(((EditText) allEds.get(i).findViewById(R.id.editText)).getText().toString());
-                                            //    Log.d("debug", ((EditText) allEds.get(i).findViewById(R.id.editText)).getText().toString());
-                                        }
+                                    if( Paper.book().read("mminute")==null){
+                                        morning.setText("9:00");
+                                        Paper.book().write("mhour",9);
+                                        Paper.book().write("mminute",0);
                                     }
-                                    Paper.book().write("mail", editmail.getText().toString());
-                                    //   Paper.book().write("answer", answers);
-                                   // Log.d("debug", "mailuser" + editmail.getText());
-                                  //  Log.d("debug", "answerString" + answers);
+                                    final ValidatorsComposer<String> emailValidatorsComposer =
+                                            new ValidatorsComposer<>(new EmptyValidator(), new EmailValidator());
+                                    if (emailValidatorsComposer.isValid(editmail.getText().toString())) {
+                                        String[] TextView = new String[allEds.size()];
+                                        for (int i = 0; i < allEds.size(); i++) {
+                                            TextView[i] = ((TextView) allEds.get(i).findViewById(R.id.answer)).getText().toString();
+                                            mapS.add(((TextView) allEds.get(i).findViewById(R.id.answer)).getText().toString());
+                                            if (((ToggleButton) allEds.get(i).findViewById(R.id.togg)) != null) {
+                                                mapS.add(((ToggleButton) allEds.get(i).findViewById(R.id.togg)).getText().toString());
+                                            } else if (((EditText) allEds.get(i).findViewById(R.id.editText)) != null) {
+                                                mapS.add(((EditText) allEds.get(i).findViewById(R.id.editText)).getText().toString());
+                                            }
+                                        }
+                                        mapS.add("во сколько вы просыпаетесь ?"+","+morning.getText().toString());
+                                        Paper.book().write("mail", editmail.getText().toString());
+                                        Intent mainIntent = new Intent(RegActivity.this, MainActivity.class);
+                                        RegActivity.this.startActivity(mainIntent);
+                                        RegActivity.this.finish();
+                                        getUp(editmail.getText().toString(), mapS.toString());
+                                    }
+                                        else {
+                                        Toast.makeText(RegActivity.this, "Не паравильный формат email", Toast.LENGTH_SHORT).show();
 
-                                    Intent mainIntent = new Intent(RegActivity.this, MainActivity.class);
-                                    RegActivity.this.startActivity(mainIntent);
-                                    RegActivity.this.finish();
-                                    getUp(editmail.getText().toString(), mapS.toString());
+                                    }
+
 
                                 }
                             });

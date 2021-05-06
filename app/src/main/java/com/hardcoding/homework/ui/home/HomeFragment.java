@@ -2,7 +2,6 @@ package com.hardcoding.homework.ui.home;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -16,9 +15,7 @@ import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProviders;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
-import com.hardcoding.homework.BuildConfig;
 import com.hardcoding.homework.DetailsActivity;
-import com.hardcoding.homework.Interface.LunchTask;
 import com.hardcoding.homework.Interface.MyInterface;
 import com.hardcoding.homework.ModelListView;
 import com.hardcoding.homework.R;
@@ -31,11 +28,8 @@ import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Map;
 
 import io.paperdb.Paper;
-import okhttp3.OkHttpClient;
-import okhttp3.logging.HttpLoggingInterceptor;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -73,22 +67,27 @@ public class HomeFragment extends Fragment {
         lv.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-
+                TextView progText = (TextView) view.findViewById(R.id.pogtext);
                 TextView title = (TextView) view.findViewById(R.id.title_task);
                 TextView desc = (TextView) view.findViewById(R.id.desc_task);
                 TextView pid = (TextView) view.findViewById(R.id.pid);
                 TextView inactive = (TextView) view.findViewById(R.id.inactive);
+                TextView time = (TextView) view.findViewById(R.id.times);
+                TextView lead_time = (TextView) view.findViewById(R.id.lead_time);
+                TextView period = (TextView) view.findViewById(R.id.period);
                 Intent intent = new Intent(getContext(), DetailsActivity.class);
                 intent.putExtra("title", title.getText().toString());
                 intent.putExtra("descript", desc.getText().toString());
                 intent.putExtra("pid", pid.getText().toString());
                 intent.putExtra("inactive", inactive.getText().toString());
-                Log.d("debug","positon click"+position);
-               intent.putExtra("position",position);
-
-
+                intent.putExtra("time", time.getText().toString());
+                intent.putExtra("lead_time", lead_time.getText().toString());
+                intent.putExtra("period", period.getText().toString());
+                intent.putExtra("progText", progText.getText().toString());
+               // Log.d("debug", "positon click" + position);
+                intent.putExtra("position", position);
                 //Log.d("debug","title"+title.getText().toString());
-                startActivity(intent);
+                startActivityForResult(intent, 1);
             }
         });
         return view;
@@ -107,11 +106,11 @@ public class HomeFragment extends Fragment {
         call.enqueue(new Callback<String>() {
             @Override
             public void onResponse(@NotNull Call<String> call, @NotNull Response<String> response) {
-                Log.d("debug", response.body().toString());
+               // Log.d("debug", response.body().toString());
                 //Toast.makeText()
                 if (response.isSuccessful()) {
                     if (response.body() != null) {
-                        Log.d("debug", response.body().toString());
+                        //Log.d("debug", response.body().toString());
 
                         String jsonresponse = response.body().toString();
                         writeListView(jsonresponse);
@@ -135,15 +134,12 @@ public class HomeFragment extends Fragment {
             //getting the whole json object from the response
             JSONObject obj = new JSONObject(response);
             if (obj.optString("success").equals("1")) {
-
                 ArrayList<ModelListView> modelListViewArrayList = new ArrayList<>();
                 JSONArray dataArray = obj.getJSONArray("products");
-
                 for (int i = 0; i < dataArray.length(); i++) {
-
                     ModelListView modelListView = new ModelListView();
                     JSONObject dataobj = dataArray.getJSONObject(i);
-                    Log.d("debug", "allfragmetn data " + dataobj);
+                //    Log.d("debug", "allfragmetn data " + dataobj);
                     //  modelListView.se(dataobj.getString("imgURL"));
                     modelListView.setId(dataobj.getString("id"));
                     modelListView.setCat(dataobj.getString("cat"));
@@ -151,6 +147,9 @@ public class HomeFragment extends Fragment {
                     modelListView.setDecsript(dataobj.getString("desc_task"));
                     modelListView.setLavel(dataobj.getString("lavel"));
                     modelListView.setInactive(dataobj.getString("inactive"));
+                    modelListView.setLead_time(dataobj.getString("lead_time"));
+                    modelListView.setTime(dataobj.getString("time"));
+                    modelListView.setPeriod(dataobj.getString("period"));
 
                     modelListViewArrayList.add(modelListView);
                     // Создаем новый HashMap
@@ -162,6 +161,9 @@ public class HomeFragment extends Fragment {
                     map.put("desc_task", dataobj.getString("desc_task"));
                     map.put("lavel", dataobj.getString("lavel"));
                     map.put("inactive", dataobj.getString("inactive"));
+                    map.put("lead_time", dataobj.getString("lead_time"));
+                    map.put("time", dataobj.getString("time"));
+                    map.put("period", dataobj.getString("period"));
                     // добавляем HashList в ArrayList
                     productsList.add(map);
 
@@ -180,5 +182,13 @@ public class HomeFragment extends Fragment {
 
     }
 
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if (data == null) {
+            return;
+        }
+       // Log.d("debug", "data result _ok");
+        getTaskJSONResponse();
+    }
 
 }

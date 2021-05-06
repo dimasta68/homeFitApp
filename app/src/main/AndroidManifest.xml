@@ -4,7 +4,11 @@
     package="com.hardcoding.homework">
 
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+    <uses-permission android:name="android.permission.WAKE_LOCK" />
+    <uses-permission android:name="android.permission.VIBRATE" />
+    <uses-permission android:name="FLAG_INCLUDE_STOPPED_PACKAGES" />
     <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
 
     <application
         android:allowBackup="true"
@@ -15,19 +19,42 @@
         android:theme="@style/AppTheme"
         android:usesCleartextTraffic="true"
         tools:targetApi="m">
-        <activity android:name=".DetailsActivity"></activity>
+        <activity android:name=".Report"></activity>
         <activity android:name=".SplashActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
-
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
         <activity android:name=".RegActivity" />
+        <activity android:name=".DetailsActivity" />
         <activity
             android:name=".MainActivity"
             android:label="@string/app_name"
-            android:theme="@style/AppTheme.NoActionBar"></activity>
+            android:theme="@style/AppTheme.NoActionBar" />
+
+        <receiver
+            android:name="com.hardcoding.homework.AlarmReceiver"
+            android:enabled="true"
+            android:process=":remote">
+            <intent-filter>
+                <action android:name="com.hardcoding.homework.AlarmReceiver" />
+            </intent-filter>
+        </receiver>
+        <receiver
+            android:name=".DeviceBootReceiver"
+            android:enabled="true">
+            <intent-filter>
+                <action android:name="android.intent.action.BOOT_COMPLETED" />
+            </intent-filter>
+        </receiver>
+        <receiver
+            android:name=".ReportReceiver"
+            android:enabled="true">
+            <intent-filter>
+                <action android:name="android.intent.action.ReoprtReciver" />
+            </intent-filter>
+        </receiver>
     </application>
 
 </manifest>

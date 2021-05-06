@@ -9,7 +9,49 @@ public class ModelListView {
     private String lavel;
     private String inactive;
     private String cat;
+    private String period;
+    private String lead_time;
+    private String time;
 
+    public String getTitle_task() {
+        return title_task;
+    }
+
+    public void setTitle_task(String title_task) {
+        this.title_task = title_task;
+    }
+
+    public String getDesc_task() {
+        return desc_task;
+    }
+
+    public void setDesc_task(String desc_task) {
+        this.desc_task = desc_task;
+    }
+
+    public String getPeriod() {
+        return period;
+    }
+
+    public void setPeriod(String period) {
+        this.period = period;
+    }
+
+    public String getLead_time() {
+        return lead_time;
+    }
+
+    public void setLead_time(String lead_time) {
+        this.lead_time = lead_time;
+    }
+
+    public String getTime() {
+        return time;
+    }
+
+    public void setTime(String time) {
+        this.time = time;
+    }
 
 
     public String getId() {

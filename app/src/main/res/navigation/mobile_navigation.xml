@@ -10,6 +10,11 @@
         android:name="com.hardcoding.homework.ui.home.HomeFragment"
         android:label="@string/menu_home"
         tools:layout="@layout/fragment_home" />
+    <fragment
+        android:id="@+id/nav_report"
+        android:name="com.hardcoding.homework.ui.report.ReportFragment"
+        android:label="@string/menu_report"
+        tools:layout="@layout/fragment_report" />
 
     <fragment
         android:id="@+id/menu_Profile"

@@ -8,14 +8,19 @@ public class Post {
 
     private String username;
 
+    private String title_task;
+
     private String answer;
+    private String status;
 
 
 
 
-    public Post(String username, String answer) {
+    public Post(String username, String answer,String status, String title_task) {
         this.username = username;
         this.answer = answer;
+        this.status = status;
+        this.title_task =title_task;
 
 
     }

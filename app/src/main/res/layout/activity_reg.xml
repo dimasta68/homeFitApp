@@ -35,6 +35,19 @@
                 android:layout_toStartOf="@+id/button2"
                 android:layout_toLeftOf="@+id/button2" />
 
+            <TextView
+                android:id="@+id/titleMor"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Во сколько вы встаете? " />
+
+            <EditText
+                android:hint="9:00"
+                android:id="@+id/morning"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:ems="10"/>
+
         </LinearLayout>
     </ScrollView>
 

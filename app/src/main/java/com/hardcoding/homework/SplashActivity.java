@@ -66,7 +66,7 @@ public class SplashActivity extends AppCompatActivity {
         cd = new ConnectionDetector(getApplicationContext());
         //Получаем статус Интернет
         isInternetPresent = cd.ConnectingToInternet();
-        Log.d("debug", "isInternetPresent= " + isInternetPresent);
+       // Log.d("debug", "isInternetPresent= " + isInternetPresent);
         //Проверяем Интернет статус:
         if (isInternetPresent) {
             /**
